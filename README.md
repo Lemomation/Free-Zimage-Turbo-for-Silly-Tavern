@@ -2,6 +2,8 @@
 
 This project provides a Stable Diffusion-compatible API bridge for free online image generators, allowing you to use them directly within SillyTavern.
 
+![In-chat UI](https://files.catbox.moe/iqy01o.png)
+
 v1.1 - Hotfix update
 AI IMAGE BRIDGE v1.1 CHANGELOG
 
@@ -56,11 +58,16 @@ AI IMAGE BRIDGE v1.1 CHANGELOG
    ```bash
    start.bat
    ```
+![Terminal Screenshot](https://files.catbox.moe/pmj8wf.png)
+   
 2. Choose which provider you want to launch.
 3. In **SillyTavern**, go to **Extensions** -> **Stable Diffusion**.
 4. Set the **API URL** to:
    - `http://127.0.0.1:8001` (for ZImage)
    - `http://127.0.0.1:8000` (for RedPanda)
+
+![Extension settings](https://files.catbox.moe/8ajbpq.png)
+
 5. Click **Connect** and start generating!
 
 ## License
