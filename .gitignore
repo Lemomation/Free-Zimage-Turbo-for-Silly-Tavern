@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+env/
+
+# Environment
+.env
+.env.test
+
+# Playwright
+ms-playwright/
+
+# OS
+.DS_Store
+Thumbs.db
