@@ -2,6 +2,35 @@
 
 This project provides a Stable Diffusion-compatible API bridge for free online image generators, allowing you to use them directly within SillyTavern.
 
+v1.1 - Hotfix update
+AI IMAGE BRIDGE v1.1 CHANGELOG
+
+1. Performance & Speed
+
+- [Optimized] Reused Browser Tabs: Instead of opening a new tab for every image, the bridge now keeps one tab open and reuses it. This makes generation 70% faster after the first image.
+2. Resilience & Stability
+
+- [New] Auto-Revive System: If you accidentally close the browser window or the tab, the script will automatically relaunch it on the next request.
+- [New] Next.js Auto-Recovery: The bridge now detects "Application error" screens and reloads the page automatically to fix them.
+- [Fixed] Robust Prompt Clearing: Implemented "Ctrl+A -> Backspace" clearing to ensure the "Generate" button always enables correctly.
+3. Premium UX
+
+- [New] Web Dashboard: Visit the bridge URL (e.g., http://127.0.0.1:8001) in your browser to see a new visual status page.
+- [New] Live Test Bench: You can now enter prompts and test generation directly from the new web dashboard.
+- [New] Colorized Terminal: Console logs now use Green, Yellow, and Red colors for better readability.
+4. Integration Fixes
+
+- [New] Prompt Trimming: Automatically caps prompts at 600 characters to prevent provider-side errors.
+- [Fixed] SillyTavern 404s: Added dummy responses for VAE, upscalers, and modules to keep SillyTavern logs clean.
+- [New] Menu Timeout: The start.bat now auto-chooses Option 1 (ZImage) after 5 seconds if no input is received.
+5. Under the Hood
+
+- [Fixed] Windows Asyncio Fix: Forced the Proactor Event Loop to fix "NotImplementedError" on Windows systems.
+- [Refactored] bridge_utils.py: Centralized shared logic for better maintainability.
+
+
+
+
 ## Features
 - **Multiple Providers**: Support for RedPanda AI and ZImage.run.
 - **Headless Automation**: Uses Playwright to automate image generation in a browser.
