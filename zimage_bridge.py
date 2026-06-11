@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from playwright.async_api import async_playwright
-from bridge_utils import find_browser_executable, setup_logging, DASHBOARD_HTML
+from bridge_utils import find_browser_executable, setup_logging, DASHBOARD_HTML, clear_ads
 
 # --- Configuration ---
 TARGET_URL = "https://zimage.run/"
@@ -76,6 +76,9 @@ class BrowserManager:
                 logger.info("Tab closed. Reopening...")
                 self.page = await self.context.new_page()
                 await self.page.goto(TARGET_URL, wait_until="domcontentloaded")
+            
+            # Aggressive Ad Clearing
+            await clear_ads(self.page, logger)
                 
             try:
                 # Truncate prompt if too long
@@ -106,6 +109,10 @@ class BrowserManager:
                 generate_button = "button:has-text('Generate Images (Free)')"
                 await self.page.click(generate_button)
                 logger.info("Generation request sent. Waiting for completion...")
+                
+                # Ensure no ads appeared after interaction
+                await asyncio.sleep(0.5)
+                await clear_ads(self.page, logger)
                 
                 image_url = None
                 timeout_seconds = 120

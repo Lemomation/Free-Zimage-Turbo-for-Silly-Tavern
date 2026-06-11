@@ -17,3 +17,13 @@ ms-playwright/
 # OS
 .DS_Store
 Thumbs.db
+
+# Bing Bridge Session
+.bing_session/
+
+# Debugging & Screenshots
+error_debug.png
+*.png
+
+# Temporary Scratch
+scratch/

@@ -67,6 +67,61 @@ def fix_windows_loop():
                 asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         except: pass
 
+async def clear_ads(page, logger):
+    """Aggressively removes ads and handles Google Vignettes across any bridge."""
+    try:
+        # 1. Inject CSS Shield
+        await page.add_style_tag(content="""
+            .google-vignette, .ins-container, #google_ads_iframe, 
+            .adsbygoogle, div[id*='google_ads'], iframe[id*='google_ads'],
+            div[class*='ad-'], .sidebar-ads, #vignette, .vignette,
+            .fixed-ad, .bottom-ad, .top-ad { 
+                display: none !important; 
+                visibility: hidden !important;
+                pointer-events: none !important; 
+                opacity: 0 !important;
+                z-index: -1000 !important;
+            }
+            body, html { overflow: auto !important; }
+        """)
+
+        # 2. Try to find and click dismiss buttons in all frames (Google Vignette specific)
+        for frame in page.frames:
+            try:
+                # Common selectors for Google Vignette dismiss buttons
+                dismiss_selectors = [
+                    "#dismiss-button", 
+                    "div[id='dismiss-button']", 
+                    "div[aria-label='Close ad']", 
+                    ".btn-close",
+                    "path[d*='M38 12.83']" # SVG path for some close buttons
+                ]
+                for selector in dismiss_selectors:
+                    btn = await frame.query_selector(selector)
+                    if btn and await btn.is_visible():
+                        await btn.click()
+                        logger.info(f"Vignette ad dismissed via {selector} in frame {frame.name or 'main'}")
+                        await asyncio.sleep(0.5)
+                        return True
+            except:
+                continue
+        
+        # 3. Clean up the DOM via JS for any persistent overlays
+        await page.evaluate("""() => {
+            const adSelectors = [
+                'ins.adsbygoogle', 'iframe[id*="google_ads"]', 'div[id*="google_ads"]',
+                '.google-vignette', '#vignette', '.vignette-container', '.ads-wrapper'
+            ];
+            adSelectors.forEach(s => {
+                document.querySelectorAll(s).forEach(el => el.remove());
+            });
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+        }""")
+    except Exception as e:
+        logger.debug(f"Clear ads error: {e}")
+    return False
+
 DASHBOARD_HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -204,7 +259,7 @@ DASHBOARD_HTML = """
 <body>
     <div class="container">
         <header>
-            <div class="badge">V1.1 Hotfix</div>
+            <div class="badge">v1.2 PRO Update</div>
             <h1 id="title">AI Image Bridge</h1>
         </header>
 
@@ -212,7 +267,11 @@ DASHBOARD_HTML = """
             <div class="pulse"></div>
             <div>
                 <strong>Bridge Status:</strong> <span id="status">ACTIVE</span><br>
-                <small id="provider-info" style="color: #94a3b8">Ready for SillyTavern connections</small>
+                <small id="provider-info" style="color: #94a3b8">Ready for SillyTavern connections</small><br>
+                <div style="margin-top: 5px; display: flex; gap: 10px;">
+                    <span style="font-size: 10px; background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(34, 197, 94, 0.3)">🛡️ AD-SHIELD ACTIVE</span>
+                    <span style="font-size: 10px; background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3)">📐 AUTO-RATIO ON</span>
+                </div>
             </div>
         </div>
 
@@ -242,8 +301,19 @@ DASHBOARD_HTML = """
 
         // Set Provider Name
         const port = window.location.port;
-        document.getElementById('title').innerText = port === '8001' ? 'ZImage Bridge' : 'RedPanda Bridge';
-        document.getElementById('provider-info').innerText = port === '8001' ? 'Provider: ZImage.run' : 'Provider: RedPanda AI';
+        if (port === '8002') {
+            document.getElementById('title').innerText = 'FreeGen Bridge';
+            document.getElementById('provider-info').innerText = 'Provider: FreeGen.app (Unlimited)';
+        } else if (port === '8001') {
+            document.getElementById('title').innerText = 'ZImage Bridge';
+            document.getElementById('provider-info').innerText = 'Provider: ZImage.run';
+        } else if (port === '8003') {
+            document.getElementById('title').innerText = 'Bing Bridge';
+            document.getElementById('provider-info').innerText = 'Provider: Bing Image Creator (Microsoft Account)';
+        } else {
+            document.getElementById('title').innerText = 'RedPanda Bridge';
+            document.getElementById('provider-info').innerText = 'Provider: RedPanda AI';
+        }
 
         genBtn.onclick = async () => {
             const prompt = promptInput.value.trim();
@@ -263,7 +333,10 @@ DASHBOARD_HTML = """
                 const data = await response.json();
                 
                 if (data.images && data.images.length > 0) {
-                    resultContainer.innerHTML = `<img src="data:image/png;base64,${data.images[0]}" alt="Result">`;
+                    const grid = data.images.map(img =>
+                        `<img src="data:image/png;base64,${img}" alt="Result" style="max-width:100%;border-radius:12px;flex:1 1 45%;">`
+                    ).join('');
+                    resultContainer.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:10px;">${grid}</div>`;
                 } else {
                     throw new Error('No image returned');
                 }
