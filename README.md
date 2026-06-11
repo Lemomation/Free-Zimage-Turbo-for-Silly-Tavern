@@ -2,7 +2,10 @@
 
 This project provides a Stable Diffusion-compatible API bridge for free online image generators, allowing you to use them directly within SillyTavern.
 
-![In-chat UI](https://files.catbox.moe/iqy01o.png)
+<p align="center">
+  <img src="https://files.catbox.moe/iqy01o.png" width="48%" alt="In-chat UI 1" />
+  <img src="https://files.catbox.moe/m9cn6k.png" width="48%" alt="In-chat UI 2" />
+</p>
 
 ## Changelog
 
@@ -47,7 +50,7 @@ This project provides a Stable Diffusion-compatible API bridge for free online i
 2. **Run the launcher**:
    - Double-click **`start.bat`** (or run it from your terminal).
 
-![Terminal Screenshot](https://files.catbox.moe/pmj8wf.png)
+![Terminal Screenshot](https://files.catbox.moe/oqq00o.png)
 
 The launcher will automatically:
 - Create a local Python virtual environment (`.venv`) to keep your system clean.
@@ -71,6 +74,12 @@ The launcher will automatically:
 ![Extension settings](https://files.catbox.moe/8ajbpq.png)
 
 5. Click **Connect** and start generating!
+
+## Web Dashboard
+
+Each bridge includes a built-in web dashboard and live test bench. Once you launch a provider, you can open its localhost API URL in your web browser (e.g., `http://127.0.0.1:8001` for ZImage, `http://127.0.0.1:8002` for FreeGen, `http://127.0.0.1:8000` for RedPanda, or `http://127.0.0.1:8003` for Bing) to check connection status, monitor console logs, or test image generation directly.
+
+![Web Dashboard Screenshot](https://files.catbox.moe/s4hidm.png)
 
 ## License
 MIT
