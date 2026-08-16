@@ -3,15 +3,14 @@ import {
     event_types,
     getContext,
     saveSettingsDebounced
-} from '../../../../script.js';
+} from '/script.js';
 import {
     extension_settings,
     renderExtensionTemplateAsync
-} from '../../../extensions.js';
-import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
-import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
-import { SlashCommandArgument, SlashCommandNamedArgument } from '../../../slash-commands/SlashCommandArgument.js';
-import { ARGUMENT_TYPE } from '../../../slash-commands/SlashCommandArgumentType.js';
+} from '/scripts/extensions.js';
+import { SlashCommandParser } from '/scripts/slash-commands/SlashCommandParser.js';
+import { SlashCommand } from '/scripts/slash-commands/SlashCommand.js';
+import { SlashCommandArgument } from '/scripts/slash-commands/SlashCommandArgument.js';
 
 // Extension Identifier & Defaults
 const MODULE_NAME = 'lemon_image_bridge';
@@ -34,7 +33,25 @@ const RATIO_DIMENSIONS = {
 };
 
 /**
- * Get the current extension settings merged with defaults
+ * Dynamically extract extension folder path relative to /scripts/extensions/
+ * This supports any folder name (e.g. sillytavern-extension, lemon-image-bridge, etc.)
+ */
+function getExtensionPath() {
+    try {
+        const url = new URL(import.meta.url);
+        const pathname = url.pathname;
+        const match = pathname.match(/extensions\/(.+)\/[^/]+$/);
+        if (match && match[1]) {
+            return match[1];
+        }
+    } catch {
+        // Fallback
+    }
+    return 'third-party/lemon-image-bridge';
+}
+
+/**
+ * Get current extension settings merged with defaults
  */
 function getSettings() {
     extension_settings[MODULE_NAME] = extension_settings[MODULE_NAME] || {};
@@ -76,8 +93,8 @@ async function checkServerHealth(quiet = false) {
             }
             return true;
         }
-    } catch (err) {
-        // Fallback or offline
+    } catch {
+        // Server unreachable
     }
 
     if (badge && text) {
@@ -151,13 +168,39 @@ function getCharacterPromptContext() {
         const parts = [];
         if (char.name) parts.push(char.name);
         if (char.description) {
-            // Take concise descriptors from character card
             const cleanDesc = char.description.replace(/\r?\n+/g, ' ').slice(0, 200);
             parts.push(cleanDesc);
         }
         return parts.join(', ');
     } catch {
         return '';
+    }
+}
+
+/**
+ * Append generated image directly to a chat message DOM element
+ */
+function appendImageToChatMessage(messageElement, b64Url) {
+    const textElement = messageElement.querySelector('.mes_text');
+    if (textElement) {
+        const imgWrap = document.createElement('div');
+        imgWrap.className = 'lemon-chat-img-wrapper';
+        imgWrap.style.marginTop = '10px';
+        imgWrap.innerHTML = `<img src="${b64Url}" style="max-width: 100%; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />`;
+        textElement.appendChild(imgWrap);
+    }
+}
+
+/**
+ * Append image to the active chat stream
+ */
+function appendImageToActiveChat(b64Url) {
+    const chatContainer = document.getElementById('chat');
+    if (chatContainer) {
+        const lastMsg = chatContainer.querySelector('.mes:last-child');
+        if (lastMsg) {
+            appendImageToChatMessage(lastMsg, b64Url);
+        }
     }
 }
 
@@ -176,7 +219,6 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
         defaultPrompt = defaultPrompt ? `${charContext}, ${defaultPrompt}` : charContext;
     }
 
-    // Modal template
     const modalHtml = `
     <div id="lemon_modal" class="lemon-modal-overlay">
         <div class="lemon-modal-content">
@@ -227,7 +269,6 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
     let selectedRatio = settings.aspect_ratio || '1:1';
     let currentB64Image = null;
 
-    // Ratio selectors
     modal.querySelectorAll('.lemon-ratio-pill').forEach(pill => {
         pill.addEventListener('click', () => {
             modal.querySelectorAll('.lemon-ratio-pill').forEach(p => p.classList.remove('active'));
@@ -236,14 +277,12 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
         });
     });
 
-    // Close logic
     const closeModal = () => modal?.remove();
     document.getElementById('lemon_modal_close').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
 
-    // Generate handler
     const genBtn = document.getElementById('lemon_modal_gen_btn');
     const promptInput = document.getElementById('lemon_modal_prompt');
     const previewArea = document.getElementById('lemon_modal_preview');
@@ -270,7 +309,6 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
             downloadBtn.href = b64;
             actionsArea.style.display = 'flex';
 
-            // Auto embed if enabled and a message element was provided
             if (settings.auto_embed_chat && messageElement) {
                 appendImageToChatMessage(messageElement, b64);
             }
@@ -283,7 +321,6 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
         }
     });
 
-    // Embed button
     embedBtn.addEventListener('click', () => {
         if (currentB64Image) {
             if (messageElement) {
@@ -295,33 +332,6 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
             closeModal();
         }
     });
-}
-
-/**
- * Append generated image directly to a chat message DOM element
- */
-function appendImageToChatMessage(messageElement, b64Url) {
-    const textElement = messageElement.querySelector('.mes_text');
-    if (textElement) {
-        const imgWrap = document.createElement('div');
-        imgWrap.className = 'lemon-chat-img-wrapper';
-        imgWrap.style.marginTop = '10px';
-        imgWrap.innerHTML = `<img src="${b64Url}" style="max-width: 100%; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />`;
-        textElement.appendChild(imgWrap);
-    }
-}
-
-/**
- * Append image to the active chat stream
- */
-function appendImageToActiveChat(b64Url) {
-    const chatContainer = document.getElementById('chat');
-    if (chatContainer) {
-        const lastMsg = chatContainer.querySelector('.mes:last-child');
-        if (lastMsg) {
-            appendImageToChatMessage(lastMsg, b64Url);
-        }
-    }
 }
 
 /**
@@ -345,7 +355,6 @@ function addVisualizerButton(messageId) {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const textContent = messageEl.querySelector('.mes_text')?.textContent || '';
-        // Extract dialog/action snippet as starter prompt
         const promptSnippet = textContent.replace(/<[^>]*>?/gm, '').slice(0, 300);
         openVisualizerModal(promptSnippet, messageEl);
     });
@@ -357,6 +366,10 @@ function addVisualizerButton(messageId) {
  * Register all Slash Commands
  */
 function registerSlashCommands() {
+    const stringArg = SlashCommandArgument.fromProps ?
+        SlashCommandArgument.fromProps({ description: 'Prompt string', isRequired: true }) :
+        'prompt';
+
     // /lemon <prompt>
     SlashCommandParser.addCommandObject(
         SlashCommand.fromProps({
@@ -374,13 +387,7 @@ function registerSlashCommands() {
                     return `Error: ${err.message}`;
                 }
             },
-            unnamedArgumentList: [
-                SlashCommandArgument.fromProps({
-                    description: 'Image prompt description',
-                    typeList: [ARGUMENT_TYPE.STRING],
-                    isRequired: true
-                })
-            ],
+            unnamedArgumentList: [stringArg],
             helpString: 'Generate an image using the active Lemon Image Bridge provider and embed it in chat.'
         })
     );
@@ -404,13 +411,7 @@ function registerSlashCommands() {
                         return `Error: ${err.message}`;
                     }
                 },
-                unnamedArgumentList: [
-                    SlashCommandArgument.fromProps({
-                        description: `Prompt for ${provider}`,
-                        typeList: [ARGUMENT_TYPE.STRING],
-                        isRequired: true
-                    })
-                ],
+                unnamedArgumentList: [stringArg],
                 helpString: `Generate an image specifically using ${provider.toUpperCase()}.`
             })
         );
@@ -429,13 +430,7 @@ function registerSlashCommands() {
                 if (window.toastr) window.toastr.success(`Active provider set to ${model}`, 'Lemon Image Bridge');
                 return `Active provider set to ${model}`;
             },
-            unnamedArgumentList: [
-                SlashCommandArgument.fromProps({
-                    description: 'Model name (freegen, ezmaker, zimage, redpanda, bing)',
-                    typeList: [ARGUMENT_TYPE.STRING],
-                    isRequired: true
-                })
-            ],
+            unnamedArgumentList: [stringArg],
             helpString: 'Set the active image generation provider.'
         })
     );
@@ -453,13 +448,7 @@ function registerSlashCommands() {
                 if (window.toastr) window.toastr.success(`Aspect ratio set to ${ratio}`, 'Lemon Image Bridge');
                 return `Aspect ratio set to ${ratio}`;
             },
-            unnamedArgumentList: [
-                SlashCommandArgument.fromProps({
-                    description: 'Aspect ratio (1:1, 16:9, 9:16, 4:3, 3:4)',
-                    typeList: [ARGUMENT_TYPE.STRING],
-                    isRequired: true
-                })
-            ],
+            unnamedArgumentList: [stringArg],
             helpString: 'Set the default aspect ratio for image generations.'
         })
     );
@@ -573,29 +562,22 @@ function initSettingsUI() {
         }
     });
 
-    // Check status quietly on load
     checkServerHealth(true);
 }
 
 // Module Entrypoint
 jQuery(async () => {
-    // Render extension settings template
     try {
-        const template = await renderExtensionTemplateAsync('third-party/lemon-image-bridge', 'settings');
+        const extPath = getExtensionPath();
+        const template = await renderExtensionTemplateAsync(extPath, 'settings');
         $('#extensions_settings').append(template);
-    } catch {
-        try {
-            const template = await renderExtensionTemplateAsync('lemon-image-bridge', 'settings');
-            $('#extensions_settings').append(template);
-        } catch (e) {
-            console.warn('[Lemon Image Bridge] Could not render settings template automatically:', e);
-        }
+    } catch (e) {
+        console.warn('[Lemon Image Bridge] Could not render settings template:', e);
     }
 
     initSettingsUI();
     registerSlashCommands();
 
-    // Attach message rendering hooks
     eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, (messageId) => addVisualizerButton(messageId));
     eventSource.on(event_types.USER_MESSAGE_RENDERED, (messageId) => addVisualizerButton(messageId));
     eventSource.on(event_types.APP_READY, () => checkServerHealth(true));
