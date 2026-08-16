@@ -335,31 +335,83 @@ async function openVisualizerModal(initialPrompt = '', messageElement = null) {
 }
 
 /**
- * Add the 🎨 Visualizer action button to a message toolbar
+ * Add the 🎨 Visualizer action button to a specific message DOM element
  */
-function addVisualizerButton(messageId) {
+function addVisualizerButtonToElement(messageEl) {
+    if (!messageEl || !(messageEl instanceof Element)) return;
     const settings = getSettings();
     if (!settings.enable_msg_btn) return;
+    if (messageEl.querySelector('.lemon-msg-btn')) return;
 
-    const messageEl = document.querySelector(`.mes[mesid="${messageId}"]`);
-    if (!messageEl) return;
-
-    const buttonsBar = messageEl.querySelector('.mes_buttons');
-    if (!buttonsBar || buttonsBar.querySelector('.lemon-msg-btn')) return;
+    // Search for button containers in order of preference
+    const buttonsBar = messageEl.querySelector('.extraMesButtons') ||
+                       messageEl.querySelector('.mes_buttons') ||
+                       messageEl.querySelector('.mes_edit');
+    if (!buttonsBar) return;
 
     const btn = document.createElement('div');
-    btn.className = 'lemon-msg-btn';
-    btn.title = 'Visualizer: Generate an AI image for this scene';
-    btn.innerHTML = '🎨';
+    btn.className = 'mes_button mes_edit_item lemon-msg-btn';
+    btn.title = 'Visualizer: Generate an AI scene image for this message';
+    btn.innerHTML = '<i class="fa-solid fa-palette"></i>';
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const textContent = messageEl.querySelector('.mes_text')?.textContent || '';
+        e.preventDefault();
+        const textContent = messageEl.querySelector('.mes_text')?.innerText ||
+                            messageEl.querySelector('.mes_text')?.textContent || '';
         const promptSnippet = textContent.replace(/<[^>]*>?/gm, '').slice(0, 300);
         openVisualizerModal(promptSnippet, messageEl);
     });
 
-    buttonsBar.appendChild(btn);
+    if (buttonsBar.classList.contains('extraMesButtons')) {
+        buttonsBar.appendChild(btn);
+    } else {
+        const extra = buttonsBar.querySelector('.extraMesButtons');
+        if (extra) extra.appendChild(btn);
+        else buttonsBar.appendChild(btn);
+    }
+}
+
+/**
+ * Add the 🎨 Visualizer action button by message ID
+ */
+function addVisualizerButton(messageId) {
+    const messageEl = document.querySelector(`.mes[mesid="${messageId}"]`);
+    if (messageEl) {
+        addVisualizerButtonToElement(messageEl);
+    }
+}
+
+/**
+ * Scan and attach palette buttons to all existing messages in chat
+ */
+function addButtonsToAllMessages() {
+    document.querySelectorAll('.mes').forEach(addVisualizerButtonToElement);
+}
+
+/**
+ * Mutation observer to instantly catch any newly rendered or loaded messages
+ */
+function initMessageObserver() {
+    addButtonsToAllMessages();
+
+    const chatContainer = document.getElementById('chat');
+    if (chatContainer) {
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.classList?.contains('mes')) {
+                            addVisualizerButtonToElement(node);
+                        } else if (node.querySelectorAll) {
+                            node.querySelectorAll('.mes').forEach(addVisualizerButtonToElement);
+                        }
+                    }
+                }
+            }
+        });
+        observer.observe(chatContainer, { childList: true, subtree: true });
+    }
 }
 
 /**
@@ -577,8 +629,17 @@ jQuery(async () => {
 
     initSettingsUI();
     registerSlashCommands();
+    initMessageObserver();
 
+    // Attach SillyTavern lifecycle hooks
     eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, (messageId) => addVisualizerButton(messageId));
     eventSource.on(event_types.USER_MESSAGE_RENDERED, (messageId) => addVisualizerButton(messageId));
-    eventSource.on(event_types.APP_READY, () => checkServerHealth(true));
+    eventSource.on(event_types.MESSAGE_UPDATED, (messageId) => addVisualizerButton(messageId));
+    eventSource.on(event_types.CHAT_CHANGED, () => {
+        setTimeout(addButtonsToAllMessages, 100);
+    });
+    eventSource.on(event_types.APP_READY, () => {
+        checkServerHealth(true);
+        addButtonsToAllMessages();
+    });
 });
