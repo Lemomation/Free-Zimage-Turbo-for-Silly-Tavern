@@ -24,6 +24,9 @@ Thumbs.db
 # Debugging & Screenshots
 error_debug.png
 *.png
+*.log
+*.err
 
 # Temporary Scratch
 scratch/
+

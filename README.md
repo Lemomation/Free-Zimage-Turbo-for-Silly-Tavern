@@ -9,6 +9,17 @@ This project provides a Stable Diffusion-compatible API bridge for free online i
 
 ## Changelog
 
+### v1.3 — EzMaker AI & Unified Lemon API Update
+
+1. **New Provider: EzMaker AI**
+   - [New] Added **EzMaker AI** bridge on Port `8004` (Fast, unlimited, no sign-up required).
+   - [New] Automatic aspect ratio support for 5 sizes: `1:1`, `16:9`, `9:16`, `4:3`, and `3:4`.
+2. **Unified Lemon API & OpenAI Compatibility**
+   - [New] Unified API server on Port `8000` supporting all 5 providers through a single endpoint.
+   - [New] Standard **OpenAI-compatible endpoints** (`POST /v1/images/generations` and `GET /v1/models`) for direct integration with OpenAI client SDKs and third-party tools.
+   - [New] One-click launcher **`startlemon.bat`** that auto-starts the background server and opens the browser test dashboard.
+   - [New] Single-port Web UI dashboard with model switcher dropdown.
+
 ### v1.2 — Launcher Fix
 
 1. **Critical Fix: Python Detection**
@@ -37,7 +48,7 @@ This project provides a Stable Diffusion-compatible API bridge for free online i
    - [Refactored] bridge_utils.py: Centralized shared logic for better maintainability.
 
 ## Features
-- **Multiple Providers**: Support for **RedPanda AI**, **ZImage.run**, **FreeGen.app**, and **Bing Image Creator** (DALL-E 3).
+- **Multiple Providers**: Support for **FreeGen.app**, **EzMaker AI**, **ZImage.run**, **RedPanda AI**, and **Bing Image Creator** (DALL-E 3).
 - **Headless & Headed Automation**: Uses Playwright to automate image generation in a browser. (Bing bridge runs headed to allow you to log in to your Microsoft Account).
 - **SillyTavern Compatible**: Emulates the `/sdapi/v1/txt2img` endpoint used by Stable Diffusion WebUI.
 - **Smart Browser Detection**: Automatically finds your existing Chrome/Edge/Chromium installation.
@@ -61,14 +72,16 @@ The launcher will automatically:
 ## Usage Details
 2. Choose the provider you want to run:
    - **[1] FreeGen Bridge** (Port 8002) - Fastest & unlimited.
-   - **[2] ZImage Bridge** (Port 8001) - Standard speed.
-   - **[3] RedPanda Bridge** (Port 8000) - Standard speed.
-   - **[4] Bing Bridge** (Port 8003) - DALL-E 3. (Requires logging into your Microsoft Account in the browser window that opens. Session cookies are saved locally in the ignored `.bing_session` folder so you stay signed in).
+   - **[2] EzMaker Bridge** (Port 8004) - Unlimited & no sign-up required.
+   - **[3] ZImage Bridge** (Port 8001) - Standard speed.
+   - **[4] RedPanda Bridge** (Port 8000) - Standard speed.
+   - **[5] Bing Bridge** (Port 8003) - DALL-E 3. (Requires logging into your Microsoft Account in the browser window that opens. Session cookies are saved locally in the ignored `.bing_session` folder so you stay signed in).
 3. In **SillyTavern**, go to **Extensions** -> **Stable Diffusion**.
 4. Set the **API URL** depending on the provider you launched:
    - `http://127.0.0.1:8002` (for FreeGen)
+   - `http://127.0.0.1:8004` (for EzMaker)
    - `http://127.0.0.1:8001` (for ZImage)
-   - `http://127.0.0.1:8000` (for RedPanda)
+   - `http://127.0.0.1:8000` (for RedPanda / Unified API)
    - `http://127.0.0.1:8003` (for Bing)
 
 ![Extension settings](https://files.catbox.moe/8ajbpq.png)
@@ -77,7 +90,7 @@ The launcher will automatically:
 
 ## Web Dashboard
 
-Each bridge includes a built-in web dashboard and live test bench. Once you launch a provider, you can open its localhost API URL in your web browser (e.g., `http://127.0.0.1:8001` for ZImage, `http://127.0.0.1:8002` for FreeGen, `http://127.0.0.1:8000` for RedPanda, or `http://127.0.0.1:8003` for Bing) to check connection status, monitor console logs, or test image generation directly.
+Each bridge includes a built-in web dashboard and live test bench. Once you launch a provider, you can open its localhost API URL in your web browser (e.g., `http://127.0.0.1:8002` for FreeGen, `http://127.0.0.1:8004` for EzMaker, `http://127.0.0.1:8001` for ZImage, `http://127.0.0.1:8000` for RedPanda/Lemon, or `http://127.0.0.1:8003` for Bing) to check connection status, monitor console logs, or test image generation directly.
 
 ![Web Dashboard Screenshot](https://files.catbox.moe/s4hidm.png)
 

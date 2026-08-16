@@ -310,6 +310,9 @@ DASHBOARD_HTML = """
         } else if (port === '8003') {
             document.getElementById('title').innerText = 'Bing Bridge';
             document.getElementById('provider-info').innerText = 'Provider: Bing Image Creator (Microsoft Account)';
+        } else if (port === '8004') {
+            document.getElementById('title').innerText = 'EzMaker Bridge';
+            document.getElementById('provider-info').innerText = 'Provider: EzMaker AI (Unlimited & No Sign-up)';
         } else {
             document.getElementById('title').innerText = 'RedPanda Bridge';
             document.getElementById('provider-info').innerText = 'Provider: RedPanda AI';

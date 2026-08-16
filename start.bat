@@ -109,22 +109,24 @@ echo       AI IMAGE BRIDGE LAUNCHER
 echo ========================================
 echo.
 echo  [1] Start FreeGen Bridge (Port 8002) - FASTEST / UNLIMITED
-echo  [2] Start ZImage Bridge (Port 8001)
-echo  [3] Start RedPanda Bridge (Port 8000)
-echo  [4] Start Bing Bridge (Port 8003) - DALL-E 3 (Requires Login)
-echo  [5] Exit
+echo  [2] Start EzMaker Bridge (Port 8004) - UNLIMITED & NO SIGN-UP
+echo  [3] Start ZImage Bridge (Port 8001)
+echo  [4] Start RedPanda Bridge (Port 8000)
+echo  [5] Start Bing Bridge (Port 8003) - DALL-E 3 (Requires Login)
+echo  [6] Exit
 echo.
 echo ========================================
 echo  (Auto-choosing [1] in 5 seconds...)
 echo.
 
 :: Choice command: /C keys, /T seconds, /D default key
-choice /C 12345 /T 5 /D 1 /M "Select an option (1-5): "
+choice /C 123456 /T 5 /D 1 /M "Select an option (1-6): "
 
-if errorlevel 5 goto end
-if errorlevel 4 goto bing
-if errorlevel 3 goto redpanda
-if errorlevel 2 goto zimage
+if errorlevel 6 goto end
+if errorlevel 5 goto bing
+if errorlevel 4 goto redpanda
+if errorlevel 3 goto zimage
+if errorlevel 2 goto ezmaker
 if errorlevel 1 goto freegen
 goto menu
 
@@ -132,6 +134,13 @@ goto menu
 echo.
 echo Starting FreeGen Bridge...
 "%PYTHON_EXE%" freegen_bridge.py
+pause
+goto menu
+
+:ezmaker
+echo.
+echo Starting EzMaker Bridge...
+"%PYTHON_EXE%" ezmaker_bridge.py
 pause
 goto menu
 
