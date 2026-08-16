@@ -1,0 +1,108 @@
+<div class="lemon-settings-container">
+    <!-- Header with Live Status -->
+    <div class="lemon-header-badge">
+        <div class="lemon-title">
+            <span>🍋</span>
+            <span>Lemon Image Bridge</span>
+        </div>
+        <div id="lemon_status_badge" class="lemon-status-badge offline">
+            <span class="lemon-status-dot"></span>
+            <span id="lemon_status_text">Checking...</span>
+        </div>
+    </div>
+
+    <!-- Server Connection Settings -->
+    <div class="lemon-input-group">
+        <label class="lemon-section-label" for="lemon_server_url">
+            API Server URL
+            <small style="font-weight: normal; color: #94a3b8;">(Default: http://127.0.0.1:8000)</small>
+        </label>
+        <div class="lemon-input-row">
+            <input id="lemon_server_url" type="text" class="text_pole" placeholder="http://127.0.0.1:8000" style="flex: 1;" />
+            <button id="lemon_test_conn_btn" type="button" class="lemon-btn lemon-btn-secondary" title="Test server connection">
+                <i class="fa-solid fa-rotate"></i> Ping
+            </button>
+        </div>
+    </div>
+
+    <!-- Provider Selection -->
+    <div>
+        <label class="lemon-section-label">Active Image Provider</label>
+        <div class="lemon-model-grid">
+            <div class="lemon-model-card active" data-model="freegen">
+                <div class="lemon-model-name">FreeGen</div>
+                <div class="lemon-model-desc">Fastest & Unlimited</div>
+            </div>
+            <div class="lemon-model-card" data-model="ezmaker">
+                <div class="lemon-model-name">EzMaker</div>
+                <div class="lemon-model-desc">No Sign-up / Free</div>
+            </div>
+            <div class="lemon-model-card" data-model="zimage">
+                <div class="lemon-model-name">ZImage</div>
+                <div class="lemon-model-desc">ZImage Turbo</div>
+            </div>
+            <div class="lemon-model-card" data-model="redpanda">
+                <div class="lemon-model-name">RedPanda</div>
+                <div class="lemon-model-desc">RedPanda AI</div>
+            </div>
+            <div class="lemon-model-card" data-model="bing">
+                <div class="lemon-model-name">Bing DALL-E</div>
+                <div class="lemon-model-desc">Microsoft Account</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aspect Ratio Selection -->
+    <div>
+        <label class="lemon-section-label">Default Aspect Ratio</label>
+        <div class="lemon-ratio-grid">
+            <div class="lemon-ratio-pill active" data-ratio="1:1">1:1 (Square)</div>
+            <div class="lemon-ratio-pill" data-ratio="16:9">16:9 (Wide)</div>
+            <div class="lemon-ratio-pill" data-ratio="9:16">9:16 (Tall)</div>
+            <div class="lemon-ratio-pill" data-ratio="4:3">4:3</div>
+            <div class="lemon-ratio-pill" data-ratio="3:4">3:4</div>
+        </div>
+    </div>
+
+    <!-- Style Preset Selection -->
+    <div class="lemon-input-group">
+        <label class="lemon-section-label" for="lemon_style_preset">Style Preset</label>
+        <select id="lemon_style_preset" class="text_pole">
+            <option value="">None (Raw Prompt)</option>
+            <option value="anime, 2d illustration, vibrant color palette, anime aesthetic, high quality">Anime / Manga 2D</option>
+            <option value="photorealistic, 8k photography, cinematic lighting, ultra detailed, award winning photo">Photorealistic</option>
+            <option value="cinematic movie still, dramatic lighting, 35mm film photograph, atmospheric">Cinematic Film</option>
+            <option value="cyberpunk aesthetic, neon lighting, dark city, futuristic, highly detailed">Cyberpunk / Sci-Fi</option>
+            <option value="dark fantasy illustration, moody lighting, ethereal, highly detailed digital painting">Dark Fantasy</option>
+            <option value="watercolor painting, soft brush strokes, pastel aesthetic, artistic">Watercolor Art</option>
+        </select>
+    </div>
+
+    <!-- In-Chat Feature Toggles -->
+    <div class="lemon-input-group" style="gap: 10px;">
+        <label class="checkbox_label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="lemon_enable_msg_btn" checked />
+            <span>Show 🎨 Visualizer button on chat messages</span>
+        </label>
+        <label class="checkbox_label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="lemon_auto_char_context" checked />
+            <span>Automatically inject character appearance tags into prompt</span>
+        </label>
+        <label class="checkbox_label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="lemon_auto_embed_chat" checked />
+            <span>Automatically embed generated images into chat history</span>
+        </label>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 6px 0;" />
+
+    <!-- Test Bench -->
+    <div class="lemon-input-group">
+        <label class="lemon-section-label" for="lemon_test_prompt">Live Test Bench</label>
+        <textarea id="lemon_test_prompt" class="text_pole" rows="3" placeholder="Enter a prompt to test generation..."></textarea>
+        <button id="lemon_test_gen_btn" type="button" class="lemon-btn" style="width: 100%;">
+            <span>✨ Generate Image</span>
+        </button>
+        <div id="lemon_test_result_area" class="lemon-modal-preview" style="min-height: 140px; margin-top: 8px; display: none;"></div>
+    </div>
+</div>

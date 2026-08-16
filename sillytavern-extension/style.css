@@ -1,0 +1,310 @@
+/* ==========================================================================
+   Lemon Image Bridge - SillyTavern Extension Styles
+   ========================================================================== */
+
+/* Message Toolbar Action Button */
+.lemon-msg-btn {
+    opacity: 0.6;
+    transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+}
+
+.lemon-msg-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.15);
+    color: #fde047 !important;
+}
+
+/* Extension Settings Panel Styles */
+.lemon-settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.lemon-header-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.lemon-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #fde047;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.lemon-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lemon-status-badge.online {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.lemon-status-badge.offline {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.lemon-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+}
+
+.lemon-status-badge.online .lemon-status-dot {
+    box-shadow: 0 0 6px #4ade80;
+    animation: lemon-pulse 2s infinite;
+}
+
+@keyframes lemon-pulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Model Selection Grid */
+.lemon-section-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--SmartThemeBodyColor, #e2e8f0);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lemon-model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.lemon-model-card {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.lemon-model-card:hover {
+    border-color: rgba(234, 179, 8, 0.5);
+    background: rgba(234, 179, 8, 0.08);
+    transform: translateY(-1px);
+}
+
+.lemon-model-card.active {
+    border-color: #eab308;
+    background: rgba(234, 179, 8, 0.18);
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.25);
+}
+
+.lemon-model-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.lemon-model-desc {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* Ratio Selection */
+.lemon-ratio-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.lemon-ratio-pill {
+    flex: 1 1 calc(20% - 6px);
+    min-width: 55px;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 6px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lemon-ratio-pill:hover {
+    border-color: rgba(234, 179, 8, 0.4);
+}
+
+.lemon-ratio-pill.active {
+    background: #eab308;
+    color: #111827;
+    border-color: #eab308;
+    font-weight: 700;
+}
+
+/* Input Fields & Actions */
+.lemon-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lemon-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.lemon-btn {
+    background: #eab308;
+    color: #111827;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.lemon-btn:hover {
+    background: #facc15;
+}
+
+.lemon-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lemon-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.lemon-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal / Lightbox Styles */
+.lemon-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: lemon-fadein 0.2s ease-out;
+}
+
+.lemon-modal-content {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    width: min(640px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.lemon-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lemon-modal-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+}
+
+.lemon-modal-close:hover {
+    color: #fff;
+}
+
+.lemon-modal-preview {
+    min-height: 200px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.lemon-modal-preview img {
+    max-width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.lemon-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(234, 179, 8, 0.2);
+    border-top-color: #eab308;
+    border-radius: 50%;
+    animation: lemon-spin 0.8s linear infinite;
+}
+
+@keyframes lemon-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes lemon-fadein {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}

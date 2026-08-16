@@ -49,11 +49,20 @@ This project provides a Stable Diffusion-compatible API bridge for free online i
 
 ## Features
 - **Multiple Providers**: Support for **FreeGen.app**, **EzMaker AI**, **ZImage.run**, **RedPanda AI**, and **Bing Image Creator** (DALL-E 3).
+- **Dedicated SillyTavern Extension**: Included in [`sillytavern-extension/`](sillytavern-extension/) with in-chat 🎨 scene visualizer, one-click model switcher, slash commands, and style presets.
 - **Headless & Headed Automation**: Uses Playwright to automate image generation in a browser. (Bing bridge runs headed to allow you to log in to your Microsoft Account).
-- **SillyTavern Compatible**: Emulates the `/sdapi/v1/txt2img` endpoint used by Stable Diffusion WebUI.
+- **OpenAI & SillyTavern Compatible**: Exposes `/v1/images/generations` and emulates the `/sdapi/v1/txt2img` endpoint used by Stable Diffusion WebUI.
 - **Smart Browser Detection**: Automatically finds your existing Chrome/Edge/Chromium installation.
 - **Aggressive Ad-Shielding**: Automatically blocks ads, popups, and Google Vignette overlays to ensure smooth, uninterrupted generation.
 - **Aspect Ratio Mapping**: Automatically detects width and height requests and maps them to the provider's available aspect ratios.
+
+## Dedicated SillyTavern Extension
+
+To use the dedicated in-chat extension:
+1. Copy the `sillytavern-extension` folder into your SillyTavern directory at:
+   `SillyTavern/public/scripts/extensions/third-party/lemon-image-bridge`
+2. Start the server with `startlemon.bat`.
+3. In SillyTavern, open Extensions -> **Lemon Image Bridge** to access live provider switching, style presets, and click the 🎨 icon on any message to generate visuals!
 
 ## Setup & Usage
 
